@@ -1,119 +1,49 @@
-using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Microsoft.Data.SqlClient;
 using TestWPF.files;
+using TestWPF.Helpers;
 using TestWPF.Models;
 
 namespace TestWPF
 {
-    /// <summary>
-    /// Логика взаимодействия для Add.xaml
-    /// </summary>
     public partial class Add : Window
     {
-        private static readonly string ConnectionString = "Data Source=localhost\\SQLEXPRESS01;Database=MyBD;Integrated Security=True;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Command Timeout=0";
-
         public Add()
         {
             InitializeComponent();
-            FillComboFromReference(SupplierTextBox, ReferenceRepository.GetSuppliers());
-            FillComboFromReference(ManufacturerTextBox, ReferenceRepository.GetManufacturers());
-            FillComboFromReference(CategoryTextBox, ReferenceRepository.GetCategories());
-            FillComboFromReference(UnitTextBox, ReferenceRepository.GetUnits());
+            ProductFormHelper.FillCombo(SupplierTextBox, ReferenceRepository.GetSuppliers());
+            ProductFormHelper.FillCombo(ManufacturerTextBox, ReferenceRepository.GetManufacturers());
+            ProductFormHelper.FillCombo(CategoryTextBox, ReferenceRepository.GetCategories());
+            ProductFormHelper.FillCombo(UnitTextBox, ReferenceRepository.GetUnits());
         }
 
-        private static void FillComboFromReference(ComboBox combo, List<IdNameItem> items)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var list = new List<IdNameItem> { new IdNameItem { Id = 0, Name = "— не выбрано —" } };
-            list.AddRange(items);
-            combo.ItemsSource = list;
-            combo.DisplayMemberPath = "Name";
-            combo.SelectedValuePath = "Id";
-            combo.SelectedIndex = 0;
-        }
-
-private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var article = ArticleTextBox.Text?.Trim() ?? "";
-            var name = NameTextBox.Text?.Trim() ?? "";
-            var description = DescriptionTextBox.Text?.Trim() ?? "";
-            int? IdOrNull(object? val) => val is int id && id > 0 ? id : null;
-            var supplierId = IdOrNull(SupplierTextBox.SelectedValue);
-            var manufacturerId = IdOrNull(ManufacturerTextBox.SelectedValue);
-            var categoryId = IdOrNull(CategoryTextBox.SelectedValue);
-            var unitId = IdOrNull(UnitTextBox.SelectedValue);
-
-            if (string.IsNullOrWhiteSpace(article))
-            {
-                MessageBox.Show("Введите артикул.", "Поле не заполнено", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                MessageBox.Show("Введите наименование товара.", "Поле не заполнено", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (!decimal.TryParse(PriceTextBox.Text?.Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var price) || price < 0)
-            {
-                MessageBox.Show("Введите корректную цену (число ≥ 0).", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (!int.TryParse(QuantityTextBox.Text, out var quantity) || quantity < 0)
-            {
-                MessageBox.Show("Введите корректное количество (целое число ≥ 0).", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (!int.TryParse(DiscountTextBox.Text, out var discount) || discount < 0 || discount > 100)
-            {
-                MessageBox.Show("Введите корректную скидку (целое число от 0 до 100).", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
+            var (ok, article, name, desc, price, qty, discount, sId, mId, cId, uId, err) = ProductFormHelper.ReadForm(
+                ArticleTextBox, NameTextBox, DescriptionTextBox, PriceTextBox, QuantityTextBox, DiscountTextBox,
+                SupplierTextBox, ManufacturerTextBox, CategoryTextBox, UnitTextBox);
+            if (!ok) { MessageBox.Show(err); return; }
             try
             {
-                int newId = AddProduct(article, name, description, price, quantity, discount, supplierId, manufacturerId, categoryId, unitId, null);
-                MessageBox.Show($"Товар добавлен.\nID: {newId}\nНаименование: {name}", "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
+                var newId = AddProduct(article, name, desc, price, qty, discount, sId, mId, cId, uId, null);
+                MessageBox.Show($"Товар добавлен. ID: {newId}");
                 Close();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка при добавлении:\n" + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
-        public static int AddProduct(
-            string article,
-            string name,
-            string description,
-            decimal price,
-            int quantity,
-            int discount,
-            int? supplierId,
-            int? manufacturerId,
-            int? categoryId,
-            int? unitId,
-            string? imagePath)
+        public static int AddProduct(string article, string name, string description, decimal price, int quantity, int discount,
+            int? supplierId, int? manufacturerId, int? categoryId, int? unitId, string? imagePath)
         {
-            using var conn = new SqlConnection(ConnectionString);
+            using var conn = new SqlConnection(ProductRepository.ConnectionString);
             conn.Open();
             using var cmd = new SqlCommand(@"
-INSERT INTO dbo.Tovar
-([Артикул], [Наименование_товара], [Единица_измерения], [Цена], [Поставщик], [Производитель], [Категория_товара], [Действующая_скидка], [Кол_во_на_складе], [Описание_товара], [Фото])
-VALUES
-(@Article, @Name, @UnitId, @Price, @SupplierId, @ManufacturerId, @CategoryId, @Discount, @Quantity, @Description, @ImagePath);
-
-SELECT CAST(SCOPE_IDENTITY() AS int);
-", conn);
-
+INSERT INTO dbo.Tovar ([Артикул],[Наименование_товара],[Единица_измерения],[Цена],[Поставщик],[Производитель],[Категория_товара],[Действующая_скидка],[Кол_во_на_складе],[Описание_товара],[Фото])
+VALUES (@Article,@Name,@UnitId,@Price,@SupplierId,@ManufacturerId,@CategoryId,@Discount,@Quantity,@Description,@ImagePath);
+SELECT CAST(SCOPE_IDENTITY() AS int);", conn);
             cmd.Parameters.AddWithValue("@Article", article);
             cmd.Parameters.AddWithValue("@Name", name);
             cmd.Parameters.AddWithValue("@UnitId", (object?)unitId ?? DBNull.Value);
@@ -125,10 +55,7 @@ SELECT CAST(SCOPE_IDENTITY() AS int);
             cmd.Parameters.AddWithValue("@Quantity", quantity);
             cmd.Parameters.AddWithValue("@Description", description);
             cmd.Parameters.AddWithValue("@ImagePath", (object?)imagePath ?? DBNull.Value);
-            
-
             return (int)cmd.ExecuteScalar();
         }
-
     }
 }
