@@ -1,4 +1,4 @@
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,13 +16,23 @@ using TestWPF.Models;
 namespace TestWPF
 {
     /// <summary>
-    /// Логика взаимодействия для Add.xaml
+    /// Логика взаимодействия для Edit.xaml
     /// </summary>
-    public partial class Add : Window
+    public partial class Edit : Window
     {
-        private static readonly string ConnectionString = "Data Source=localhost\\SQLEXPRESS01;Database=MyBD;Integrated Security=True;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Command Timeout=0";
+        private string _article;
+        private string _name;
+        private string _description;
+        private string _supplier;
+        private string _manufacturer;
+        private string _category;
+        private string _unit;
+        private string _discount;
+        private string _price;
+        private string _quantity;
+        private string ConnectionString = "Data Source=localhost\\SQLEXPRESS01;Database=MyBD;Integrated Security=True;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Command Timeout=0";
 
-        public Add()
+        public Edit()
         {
             InitializeComponent();
             FillComboFromReference(SupplierTextBox, ReferenceRepository.GetSuppliers());
@@ -31,6 +41,34 @@ namespace TestWPF
             FillComboFromReference(UnitTextBox, ReferenceRepository.GetUnits());
         }
 
+
+        public Edit(string article, string name, string description, string supplier, string manufacturer, string category, string unit, decimal price, int quantity, int discount)
+        {
+            InitializeComponent();
+            ArticleTextBox.Text = article;
+            NameTextBox.Text = name;
+            DescriptionTextBox.Text = description;
+            SupplierTextBox.Text = supplier;
+            ManufacturerTextBox.Text = manufacturer;
+            CategoryTextBox.Text = category;
+            UnitTextBox.Text = unit;
+            PriceTextBox.Text = price.ToString("F2");
+            QuantityTextBox.Text = quantity.ToString();
+            DiscountTextBox.Text = discount.ToString();
+
+            _article = article;
+                _name = name;
+                _description = description;
+                _supplier = supplier;
+                _manufacturer = manufacturer;
+                _category = category;
+                _unit = unit;
+                _price = price.ToString("F2");
+                _quantity = quantity.ToString();
+                _discount = discount.ToString();
+
+
+        }
         private static void FillComboFromReference(ComboBox combo, List<IdNameItem> items)
         {
             var list = new List<IdNameItem> { new IdNameItem { Id = 0, Name = "— не выбрано —" } };
@@ -40,24 +78,14 @@ namespace TestWPF
             combo.SelectedValuePath = "Id";
             combo.SelectedIndex = 0;
         }
-
-private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var article = ArticleTextBox.Text?.Trim() ?? "";
-            var name = NameTextBox.Text?.Trim() ?? "";
-            var description = DescriptionTextBox.Text?.Trim() ?? "";
-            int? IdOrNull(object? val) => val is int id && id > 0 ? id : null;
-            var supplierId = IdOrNull(SupplierTextBox.SelectedValue);
-            var manufacturerId = IdOrNull(ManufacturerTextBox.SelectedValue);
-            var categoryId = IdOrNull(CategoryTextBox.SelectedValue);
-            var unitId = IdOrNull(UnitTextBox.SelectedValue);
-
-            if (string.IsNullOrWhiteSpace(article))
+            if (string.IsNullOrWhiteSpace(_article))
             {
                 MessageBox.Show("Введите артикул.", "Поле не заполнено", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(_name))
             {
                 MessageBox.Show("Введите наименование товара.", "Поле не заполнено", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -80,8 +108,8 @@ private void Button_Click(object sender, RoutedEventArgs e)
 
             try
             {
-                int newId = AddProduct(article, name, description, price, quantity, discount, supplierId, manufacturerId, categoryId, unitId, null);
-                MessageBox.Show($"Товар добавлен.\nID: {newId}\nНаименование: {name}", "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
+                int newId = EditProduct(_article, _name, _description, price, quantity, discount, _supplierid, _manufacturer, _category, _unit, null);
+                MessageBox.Show($"Товар добавлен.\nID: {newId}\nНаименование: {_name}", "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
                 Close();
             }
             catch (Exception ex)
@@ -90,8 +118,7 @@ private void Button_Click(object sender, RoutedEventArgs e)
             }
         }
 
-        public static int AddProduct(
-            string article,
+        private int EditProduct(string article,
             string name,
             string description,
             decimal price,
@@ -103,6 +130,7 @@ private void Button_Click(object sender, RoutedEventArgs e)
             int? unitId,
             string? imagePath)
         {
+
             using var conn = new SqlConnection(ConnectionString);
             conn.Open();
             using var cmd = new SqlCommand(@"
@@ -125,10 +153,11 @@ SELECT CAST(SCOPE_IDENTITY() AS int);
             cmd.Parameters.AddWithValue("@Quantity", quantity);
             cmd.Parameters.AddWithValue("@Description", description);
             cmd.Parameters.AddWithValue("@ImagePath", (object?)imagePath ?? DBNull.Value);
-            
+
 
             return (int)cmd.ExecuteScalar();
         }
-
+    }
+    }
     }
 }

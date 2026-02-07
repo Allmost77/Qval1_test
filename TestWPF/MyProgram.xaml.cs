@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -154,8 +154,23 @@ namespace TestWPF
 
         private void Add_card(object sender, RoutedEventArgs e)
         {
-            Add addWindow = new Add();
+            var addWindow = new Add();
             addWindow.ShowDialog();
+            LoadProducts();
+            LoadSupliers();
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+           Edit edit = new Edit();
+            if (ProductsList.SelectedItem is not Product selected)
+            {
+                MessageBox.Show("Выберите товар (кликни по карточке).");
+                return;
+            }
+            edit.SetProduct(selected);
+            edit.ShowDialog();
+            LoadProducts();
         }
     }
 }

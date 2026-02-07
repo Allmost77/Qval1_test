@@ -144,7 +144,6 @@
                                        HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
-
                         </Grid>
                     </Border>
                 </DataTemplate>
@@ -152,8 +151,9 @@
         </ListView>
         <Button Content="Назад" HorizontalAlignment="Left" Margin="22,23,0,0" VerticalAlignment="Top" Click="Button_Click"/>
         <ComboBox x:Name="supplierCombo" HorizontalAlignment="Left" Margin="22,106,0,0" VerticalAlignment="Top" Width="251" SelectionChanged="supplierCombo_SelectionChanged"/>
-        <Button Content="Удалить товар" Click="Delete_Button" HorizontalAlignment="Left" Margin="527,72,0,0" VerticalAlignment="Top"/>
+        <Button Content="Удалить товар" Click="Delete_Button" HorizontalAlignment="Left" Margin="462,72,0,0" VerticalAlignment="Top"/>
         <Button Content="Добавить товар" HorizontalAlignment="Left" Margin="341,72,0,0" VerticalAlignment="Top" Width="94" Click="Add_card"/>
+        <Button Content="Button" Click="Button_Click_1" HorizontalAlignment="Left" Margin="580,72,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.153,-0.333" Width="93"/>
 
 
 

@@ -1,0 +1,32 @@
+﻿<Window x:Class="TestWPF.Edit"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestWPF"
+        mc:Ignorable="d"
+        Title="Edit" Height="450" Width="800">
+    <Grid>
+        <TextBox x:Name="ArticleTextBox"  HorizontalAlignment="Left" Margin="41,45,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="NameTextBox" HorizontalAlignment="Left" Margin="41,85,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="QuantityTextBox" HorizontalAlignment="Left" Margin="41,120,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="DiscountTextBox" HorizontalAlignment="Left" Margin="41,161,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="PriceTextBox" HorizontalAlignment="Left" Margin="41,0,0,197" TextWrapping="Wrap" Text="" VerticalAlignment="Bottom" Width="120"/>
+        <TextBox x:Name="DescriptionTextBox" HorizontalAlignment="Left" Margin="41,268,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="317"/>
+        <ComboBox x:Name="SupplierTextBox" HorizontalAlignment="Left" Margin="247,45,0,0" VerticalAlignment="Top" Width="120"/>
+        <ComboBox x:Name="ManufacturerTextBox" HorizontalAlignment="Left" Margin="247,94,0,0" VerticalAlignment="Top" Width="120"/>
+        <ComboBox x:Name="CategoryTextBox" HorizontalAlignment="Left" Margin="247,141,0,0" VerticalAlignment="Top" Width="120"/>
+        <ComboBox x:Name="UnitTextBox" HorizontalAlignment="Left" Margin="247,192,0,0" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Артикул" HorizontalAlignment="Left" Margin="41,14,0,0" VerticalAlignment="Top"/>
+        <Label Content="Наименование" HorizontalAlignment="Left" Margin="41,59,0,0" VerticalAlignment="Top"/>
+        <Label Content="Количество" HorizontalAlignment="Left" Margin="41,98,0,0" VerticalAlignment="Top"/>
+        <Label Content="Скидка" HorizontalAlignment="Left" Margin="41,137,0,0" VerticalAlignment="Top"/>
+        <Label Content="Цена" HorizontalAlignment="Left" Margin="41,182,0,0" VerticalAlignment="Top"/>
+        <Label Content="Описание" HorizontalAlignment="Left" Margin="41,237,0,0" VerticalAlignment="Top"/>
+        <Label Content="Поставщик" HorizontalAlignment="Left" Margin="247,19,0,0" VerticalAlignment="Top"/>
+        <Label Content="Производитель" HorizontalAlignment="Left" Margin="247,72,0,0" VerticalAlignment="Top"/>
+        <Label Content="Категория" HorizontalAlignment="Left" Margin="247,112,0,0" VerticalAlignment="Top"/>
+        <Label Content="Единица измерения" HorizontalAlignment="Left" Margin="247,161,0,0" VerticalAlignment="Top"/>
+        <Button Content="Добавить" Click="Button_Click" HorizontalAlignment="Left" Margin="545,380,0,0" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
