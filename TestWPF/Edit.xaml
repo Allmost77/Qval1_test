@@ -1,4 +1,4 @@
-﻿<Window x:Class="TestWPF.Edit"
+<Window x:Class="TestWPF.Edit"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -27,6 +27,6 @@
         <Label Content="Производитель" HorizontalAlignment="Left" Margin="247,72,0,0" VerticalAlignment="Top"/>
         <Label Content="Категория" HorizontalAlignment="Left" Margin="247,112,0,0" VerticalAlignment="Top"/>
         <Label Content="Единица измерения" HorizontalAlignment="Left" Margin="247,161,0,0" VerticalAlignment="Top"/>
-        <Button Content="Добавить" Click="Button_Click" HorizontalAlignment="Left" Margin="545,380,0,0" VerticalAlignment="Top"/>
+        <Button Content="Сохранить" Click="Button_Click" HorizontalAlignment="Left" Margin="545,380,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

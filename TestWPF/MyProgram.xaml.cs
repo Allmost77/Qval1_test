@@ -160,17 +160,18 @@ namespace TestWPF
             LoadSupliers();
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void Edit_card(object sender, RoutedEventArgs e)
         {
-           Edit edit = new Edit();
             if (ProductsList.SelectedItem is not Product selected)
             {
                 MessageBox.Show("Выберите товар (кликни по карточке).");
                 return;
             }
-            edit.SetProduct(selected);
-            edit.ShowDialog();
+            var editWindow = new Edit();
+            editWindow.SetProduct(selected);
+            editWindow.ShowDialog();
             LoadProducts();
+            LoadSupliers();
         }
     }
 }

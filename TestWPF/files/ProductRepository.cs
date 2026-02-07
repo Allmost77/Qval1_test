@@ -44,6 +44,7 @@ namespace TestWPF.files
                 list.Add(new Product
                 {
                     Id = Db.I(r, "Id"),
+                    Article = Db.S(r, "Article"),
                     Name = Db.S(r, "Name"),
                     Category = Db.S(r, "Category"),
                     Description = Db.S(r, "Description"),
@@ -64,7 +65,54 @@ namespace TestWPF.files
             conn.Open();
             using var cmd = new SqlCommand("DELETE FROM dbo.Tovar WHERE Номер = @Номер", conn);
             cmd.Parameters.AddWithValue("@Номер", id);
-            return cmd.ExecuteNonQuery(); 
+            return cmd.ExecuteNonQuery();
+        }
+
+        /// <summary>Обновляет карточку товара по Номер (Id). Передаются Id справочников, не названия.</summary>
+        public static int UpdateProduct(int id,
+            string article,
+            string name,
+            string description,
+            decimal price,
+            int quantity,
+            int discount,
+            int? supplierId,
+            int? manufacturerId,
+            int? categoryId,
+            int? unitId,
+            string? imagePath)
+        {
+            using var conn = new SqlConnection(ConnectionString);
+            conn.Open();
+            using var cmd = new SqlCommand(@"
+UPDATE dbo.Tovar SET
+  [Артикул] = @Article,
+  [Наименование_товара] = @Name,
+  [Описание_товара] = @Description,
+  [Цена] = @Price,
+  [Кол_во_на_складе] = @Quantity,
+  [Действующая_скидка] = @Discount,
+  [Поставщик] = @SupplierId,
+  [Производитель] = @ManufacturerId,
+  [Категория_товара] = @CategoryId,
+  [Единица_измерения] = @UnitId,
+  [Фото] = @ImagePath
+WHERE Номер = @Id", conn);
+
+            cmd.Parameters.AddWithValue("@Id", id);
+            cmd.Parameters.AddWithValue("@Article", article);
+            cmd.Parameters.AddWithValue("@Name", name);
+            cmd.Parameters.AddWithValue("@Description", description);
+            cmd.Parameters.AddWithValue("@Price", price);
+            cmd.Parameters.AddWithValue("@Quantity", quantity);
+            cmd.Parameters.AddWithValue("@Discount", discount);
+            cmd.Parameters.AddWithValue("@SupplierId", (object?)supplierId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@ManufacturerId", (object?)manufacturerId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@CategoryId", (object?)categoryId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@UnitId", (object?)unitId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@ImagePath", (object?)imagePath ?? DBNull.Value);
+
+            return cmd.ExecuteNonQuery();
         }
     }
 }

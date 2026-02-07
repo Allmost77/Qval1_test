@@ -1,36 +1,17 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using TestWPF.files;
 using TestWPF.Models;
 
 namespace TestWPF
 {
-    /// <summary>
-    /// Логика взаимодействия для Edit.xaml
-    /// </summary>
     public partial class Edit : Window
     {
-        private string _article;
-        private string _name;
-        private string _description;
-        private string _supplier;
-        private string _manufacturer;
-        private string _category;
-        private string _unit;
-        private string _discount;
-        private string _price;
-        private string _quantity;
-        private string ConnectionString = "Data Source=localhost\\SQLEXPRESS01;Database=MyBD;Integrated Security=True;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Command Timeout=0";
+        private int _productId;
 
         public Edit()
         {
@@ -41,34 +22,23 @@ namespace TestWPF
             FillComboFromReference(UnitTextBox, ReferenceRepository.GetUnits());
         }
 
-
-        public Edit(string article, string name, string description, string supplier, string manufacturer, string category, string unit, decimal price, int quantity, int discount)
+        /// <summary>Подставляет данные выбранной карточки в форму. Комбобоксы выбираются по совпадению названия.</summary>
+        public void SetProduct(Product p)
         {
-            InitializeComponent();
-            ArticleTextBox.Text = article;
-            NameTextBox.Text = name;
-            DescriptionTextBox.Text = description;
-            SupplierTextBox.Text = supplier;
-            ManufacturerTextBox.Text = manufacturer;
-            CategoryTextBox.Text = category;
-            UnitTextBox.Text = unit;
-            PriceTextBox.Text = price.ToString("F2");
-            QuantityTextBox.Text = quantity.ToString();
-            DiscountTextBox.Text = discount.ToString();
+            _productId = p.Id;
+            ArticleTextBox.Text = p.Article ?? "";
+            NameTextBox.Text = p.Name ?? "";
+            DescriptionTextBox.Text = p.Description ?? "";
+            PriceTextBox.Text = p.Price.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+            QuantityTextBox.Text = p.Quantity.ToString();
+            DiscountTextBox.Text = p.Discount.ToString();
 
-            _article = article;
-                _name = name;
-                _description = description;
-                _supplier = supplier;
-                _manufacturer = manufacturer;
-                _category = category;
-                _unit = unit;
-                _price = price.ToString("F2");
-                _quantity = quantity.ToString();
-                _discount = discount.ToString();
-
-
+            SelectComboByName(SupplierTextBox, p.Supplier?.Trim());
+            SelectComboByName(ManufacturerTextBox, p.Manufacturer?.Trim());
+            SelectComboByName(CategoryTextBox, p.Category?.Trim());
+            SelectComboByName(UnitTextBox, p.Unit?.Trim());
         }
+
         private static void FillComboFromReference(ComboBox combo, List<IdNameItem> items)
         {
             var list = new List<IdNameItem> { new IdNameItem { Id = 0, Name = "— не выбрано —" } };
@@ -78,14 +48,33 @@ namespace TestWPF
             combo.SelectedValuePath = "Id";
             combo.SelectedIndex = 0;
         }
+
+        private static void SelectComboByName(ComboBox combo, string? name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return;
+            if (combo.ItemsSource is not IEnumerable<IdNameItem> list) return;
+            var item = list.FirstOrDefault(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase));
+            if (item != null)
+                combo.SelectedValue = item.Id;
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(_article))
+            var article = ArticleTextBox.Text?.Trim() ?? "";
+            var name = NameTextBox.Text?.Trim() ?? "";
+            var description = DescriptionTextBox.Text?.Trim() ?? "";
+            int? IdOrNull(object? val) => val is int id && id > 0 ? id : null;
+            var supplierId = IdOrNull(SupplierTextBox.SelectedValue);
+            var manufacturerId = IdOrNull(ManufacturerTextBox.SelectedValue);
+            var categoryId = IdOrNull(CategoryTextBox.SelectedValue);
+            var unitId = IdOrNull(UnitTextBox.SelectedValue);
+
+            if (string.IsNullOrWhiteSpace(article))
             {
                 MessageBox.Show("Введите артикул.", "Поле не заполнено", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (string.IsNullOrWhiteSpace(_name))
+            if (string.IsNullOrWhiteSpace(name))
             {
                 MessageBox.Show("Введите наименование товара.", "Поле не заполнено", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -108,56 +97,14 @@ namespace TestWPF
 
             try
             {
-                int newId = EditProduct(_article, _name, _description, price, quantity, discount, _supplierid, _manufacturer, _category, _unit, null);
-                MessageBox.Show($"Товар добавлен.\nID: {newId}\nНаименование: {_name}", "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
+                ProductRepository.UpdateProduct(_productId, article, name, description, price, quantity, discount, supplierId, manufacturerId, categoryId, unitId, null);
+                MessageBox.Show("Изменения сохранены.", "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
                 Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при добавлении:\n" + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Ошибка при сохранении:\n" + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        private int EditProduct(string article,
-            string name,
-            string description,
-            decimal price,
-            int quantity,
-            int discount,
-            int? supplierId,
-            int? manufacturerId,
-            int? categoryId,
-            int? unitId,
-            string? imagePath)
-        {
-
-            using var conn = new SqlConnection(ConnectionString);
-            conn.Open();
-            using var cmd = new SqlCommand(@"
-INSERT INTO dbo.Tovar
-([Артикул], [Наименование_товара], [Единица_измерения], [Цена], [Поставщик], [Производитель], [Категория_товара], [Действующая_скидка], [Кол_во_на_складе], [Описание_товара], [Фото])
-VALUES
-(@Article, @Name, @UnitId, @Price, @SupplierId, @ManufacturerId, @CategoryId, @Discount, @Quantity, @Description, @ImagePath);
-
-SELECT CAST(SCOPE_IDENTITY() AS int);
-", conn);
-
-            cmd.Parameters.AddWithValue("@Article", article);
-            cmd.Parameters.AddWithValue("@Name", name);
-            cmd.Parameters.AddWithValue("@UnitId", (object?)unitId ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Price", price);
-            cmd.Parameters.AddWithValue("@SupplierId", (object?)supplierId ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@ManufacturerId", (object?)manufacturerId ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@CategoryId", (object?)categoryId ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Discount", discount);
-            cmd.Parameters.AddWithValue("@Quantity", quantity);
-            cmd.Parameters.AddWithValue("@Description", description);
-            cmd.Parameters.AddWithValue("@ImagePath", (object?)imagePath ?? DBNull.Value);
-
-
-            return (int)cmd.ExecuteScalar();
-        }
-    }
-    }
     }
 }
