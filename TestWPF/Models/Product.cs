@@ -5,7 +5,7 @@ namespace TestWPF.Models
     public class Product
     {
         static readonly string ImgPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Images");
-        static string DefaultImg => Path.Combine(ImgPath, "Icon.JPG");
+        static string DefaultImgPackUri => "pack://application:,,,/Images/Icon.JPG";
 
         public int Id { get; set; }
         public string Article { get; set; } = "";
@@ -20,7 +20,13 @@ namespace TestWPF.Models
         public int Discount { get; set; }
         public string ImagePath { get; set; } = "";
 
-        public string ImageOfPlaceholder => string.IsNullOrWhiteSpace(ImagePath) ? DefaultImg : (File.Exists(Path.Combine(ImgPath, ImagePath)) ? Path.Combine(ImgPath, ImagePath) : DefaultImg);
+        public string ImageOfPlaceholder
+        {
+            get
+            {
+                return $"pack://application:,,,/Images/{ImagePath}";
+            }
+        }
         public decimal FinalPrice => Price * (100m - Discount) / 100m;
         public bool HasDiscount => Discount > 0;
         public bool OutOfStock => Quantity <= 0;
