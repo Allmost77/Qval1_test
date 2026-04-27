@@ -5,7 +5,7 @@ namespace TestWPF
 {
     public partial class MainWindow : Window
     {
-        const string Conn = "Data Source=localhost\\SQLEXPRESS01;Database=MyBD;Integrated Security=True;Pooling=False;Encrypt=True;TrustServerCertificate=True;Command Timeout=0";
+        const string Conn = "Data Source=localhost\\SQLEXPRESS;Database=Qval1_1;Integrated Security=True;Pooling=False;Encrypt=True;TrustServerCertificate=True;Command Timeout=0";
 
         public MainWindow()
         {

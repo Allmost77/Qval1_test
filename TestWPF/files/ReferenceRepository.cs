@@ -14,12 +14,19 @@ namespace TestWPF.files
             conn.Open();
             using var cmd = new SqlCommand(sql, conn);
             using var r = cmd.ExecuteReader();
-            while (r.Read()) list.Add(new IdNameItem { Id = Db.I(r, "Номер"), Name = Db.S(r, nameCol) });
+            while (r.Read()) list.Add(new IdNameItem { Id = Db.I(r, "ТоварID"), Name = Db.S(r, nameCol) });
             return list;
         }
-        public static List<IdNameItem> GetSuppliers() => Load("SELECT Номер, Поставщик FROM dbo.Поставщик ORDER BY Поставщик", "Поставщик");
-        public static List<IdNameItem> GetManufacturers() => Load("SELECT Номер, Производитель FROM dbo.Производительl ORDER BY Производитель", "Производитель");
-        public static List<IdNameItem> GetCategories() => Load("SELECT Номер, Категория_товара FROM dbo.[Категория товара] ORDER BY Категория_товара", "Категория_товара");
-        public static List<IdNameItem> GetUnits() => Load("SELECT Номер, Единица_измерения FROM dbo.Ед ORDER BY Единица_измерения", "Единица_измерения");
+        public static List<IdNameItem> GetSuppliers() =>
+    Load("SELECT ID AS ТоварID, Имя AS Поставщик FROM dbo.Поставщик ORDER BY Имя", "Поставщик");
+
+        public static List<IdNameItem> GetManufacturers() =>
+            Load("SELECT ID AS ТоварID, Имя AS Производитель FROM dbo.Производитель ORDER BY Имя", "Производитель");
+
+        public static List<IdNameItem> GetCategories() =>
+            Load("SELECT ID AS ТоварID, Имя AS Категория_товара FROM dbo.КатегорияТовара ORDER BY Имя", "Категория_товара");
+
+        public static List<IdNameItem> GetUnits() =>
+            Load("SELECT ID AS ТоварID, Имя AS ЕдиницаИзмерения FROM dbo.ЕдиницаИзмерения ORDER BY Имя", "ЕдиницаИзмерения");
     }
 }

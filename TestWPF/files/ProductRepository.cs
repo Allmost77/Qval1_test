@@ -13,7 +13,7 @@ namespace TestWPF.files
     public static class ProductRepository
     {
 
-        internal static string ConnectionString = "Data Source=localhost\\SQLEXPRESS01;Database=MyBD;Integrated Security=True;Pooling=False;Encrypt=True;TrustServerCertificate=True;Command Timeout=0";
+        internal static string ConnectionString = "Data Source=localhost\\SQLEXPRESS;Database=Qval1_1;Integrated Security=True;Pooling=False;Encrypt=True;TrustServerCertificate=True;Command Timeout=0";
 
         public static List<Product> GetProducts()
         {
@@ -47,7 +47,7 @@ namespace TestWPF.files
         {
             using var conn = new SqlConnection(ConnectionString);
             conn.Open();
-            using var cmd = new SqlCommand("DELETE FROM dbo.Tovar WHERE Номер = @Id", conn);
+            using var cmd = new SqlCommand("DELETE FROM dbo.Товар WHERE ТоварID = @Id", conn);
             cmd.Parameters.AddWithValue("@Id", id);
             return cmd.ExecuteNonQuery();
         }
@@ -57,7 +57,7 @@ namespace TestWPF.files
         {
             using var conn = new SqlConnection(ConnectionString);
             conn.Open();
-            using var cmd = new SqlCommand(@"UPDATE dbo.Tovar SET [Артикул]=@Article,[Наименование_товара]=@Name,[Описание_товара]=@Description,[Цена]=@Price,[Кол_во_на_складе]=@Quantity,[Действующая_скидка]=@Discount,[Поставщик]=@SupplierId,[Производитель]=@ManufacturerId,[Категория_товара]=@CategoryId,[Единица_измерения]=@UnitId,[Фото]=@ImagePath WHERE Номер=@Id", conn);
+            using var cmd = new SqlCommand(@"UPDATE dbo.Товар SET [Артикул]=@Article,[Наименование_товара]=@Name,[Описание_товара]=@Description,[Цена]=@Price,[Кол_во_на_складе]=@Quantity,[Действующая_скидка]=@Discount,[ПоставщикID]=@SupplierId,[ПроизводительID]=@ManufacturerId,[КатегорияТовараID]=@CategoryId,[ЕдиницаИзмеренияID]=@UnitId,[Фото]=@ImagePath WHERE ТоварID=@Id", conn);
 
             cmd.Parameters.AddWithValue("@Id", id);
             cmd.Parameters.AddWithValue("@Article", article);

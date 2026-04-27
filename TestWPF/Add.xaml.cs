@@ -41,7 +41,7 @@ namespace TestWPF
             using var conn = new SqlConnection(ProductRepository.ConnectionString);
             conn.Open();
             using var cmd = new SqlCommand(@"
-INSERT INTO dbo.Tovar ([Артикул],[Наименование_товара],[Единица_измерения],[Цена],[Поставщик],[Производитель],[Категория_товара],[Действующая_скидка],[Кол_во_на_складе],[Описание_товара],[Фото])
+INSERT INTO dbo.Товар ([Артикул],[Наименование_товара],[ЕдиницаИзмеренияID],[Цена],[ПоставщикID],[ПроизводительID],[КатегорияТовараID],[Действующая_скидка],[Кол_во_на_складе],[Описание_товара],[Фото])
 VALUES (@Article,@Name,@UnitId,@Price,@SupplierId,@ManufacturerId,@CategoryId,@Discount,@Quantity,@Description,@ImagePath);
 SELECT CAST(SCOPE_IDENTITY() AS int);", conn);
             cmd.Parameters.AddWithValue("@Article", article);
