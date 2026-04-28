@@ -11,6 +11,7 @@ namespace TestWPF
         {
             InitializeComponent();
             try { using var c = new SqlConnection(Conn); c.Open(); } catch (SqlException ex) { MessageBox.Show(ex.Message); }
+
         }
 
         private void To_guest_Click(object sender, RoutedEventArgs e) { Open("", "", "", ""); }

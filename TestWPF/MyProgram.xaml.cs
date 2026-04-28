@@ -1,72 +1,164 @@
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using TestWPF.files;
+using TestWPF.Data;
 using TestWPF.Models;
 
 namespace TestWPF
 {
     public partial class MyProgram : Window
     {
-        public ObservableCollection<Product> Products { get; } = new();
-        private List<Product> _all = new();
+        public ObservableCollection<Товар> Products { get; } = new();
+        private List<Товар> _all = new();
 
         public MyProgram(string role, string name, string surname, string patronymic)
         {
             InitializeComponent();
-            UserName.Content = $"{surname} {name} {patronymic}";
+            //UserName.Content = $"{surname} {name} {patronymic}";
             DataContext = this;
             LoadSuppliers();
             LoadProducts();
+            using var db = new AppDbContext();
+
+            var products = db.Товары.ToList();
+
+            MessageBox.Show($"Товаров: {products.Count}");
+        }
+
+        //void LoadSuppliers()
+        //{
+        //    supplierCombo.Items.Clear();
+        //    supplierCombo.Items.Add("Все");
+        //    var seen = new HashSet<string>();
+        //    foreach (var p in ProductRepository.GetProducts()) { var s = p.Supplier?.Trim() ?? ""; if (seen.Add(s)) supplierCombo.Items.Add(s); }
+        //    supplierCombo.SelectedIndex = 0;
+        //}
+
+        void LoadProducts()
+        {
+            using var db = new AppDbContext();
+
+            _all = db.Товары
+                .Include(t => t.Поставщик)
+                .Include(t => t.Производитель)
+                .Include(t => t.КатегорияТовара)
+                .Include(t => t.ЕдиницаИзмерения)
+                .ToList();
+
+            ApplyFilters();
+        }
+        void ApplyFilters()
+        {
+            var items = _all.AsEnumerable();
+
+            var search = SearchBox.Text?.Trim().ToLower();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                items = items.Where(t =>
+                    t.Наименование_товара.ToLower().Contains(search) ||
+                    t.Описание_товара.ToLower().Contains(search) ||
+                    t.Артикул.ToLower().Contains(search) ||
+                    t.Поставщик!.Имя.ToLower().Contains(search) ||
+                    t.Производитель!.Имя.ToLower().Contains(search) ||
+                    t.КатегорияТовара!.Имя.ToLower().Contains(search)
+                );
+            }
+
+            if (supplierCombo.SelectedItem is Поставщик supplier && supplier.ID != 0)
+            {
+                items = items.Where(t => t.ПоставщикID == supplier.ID);
+            }
+
+            ProductsList.ItemsSource = items.ToList();
+        }
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyFilters();
+        }
+        private void SupplierBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
         }
 
         void LoadSuppliers()
         {
-            supplierCombo.Items.Clear();
-            supplierCombo.Items.Add("Все");
-            var seen = new HashSet<string>();
-            foreach (var p in ProductRepository.GetProducts()) { var s = p.Supplier?.Trim() ?? ""; if (seen.Add(s)) supplierCombo.Items.Add(s); }
+            using var db = new AppDbContext();
+
+            var suppliers = db.Поставщики
+                .OrderBy(s => s.Имя)
+                .ToList();
+
+            suppliers.Insert(0, new Поставщик
+            {
+                ID = 0,
+                Имя = "Все поставщики"
+            });
+
+            supplierCombo.ItemsSource = suppliers;
+            supplierCombo.DisplayMemberPath = "Имя";
+            supplierCombo.SelectedValuePath = "ID";
             supplierCombo.SelectedIndex = 0;
         }
+        private void GoBackButton_Click(object sender, RoutedEventArgs e) { new MainWindow().Show(); Close(); }
 
-        void LoadProducts() { _all = ProductRepository.GetProducts(); ApplyFilters(); }
 
-        void ApplyFilters()
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            Products.Clear();
-            var supplier = supplierCombo.SelectedItem?.ToString() ?? "Все";
-            var search = SearchTextBox.Text.Trim();
-            foreach (var p in _all)
+            if (ProductsList.SelectedItem is not Товар selected)
             {
-                if (supplier != "Все" && p.Supplier != supplier) continue;
-                if (!string.IsNullOrWhiteSpace(search) && !Match(p, search)) continue;
-                Products.Add(p);
+                MessageBox.Show("Выберите товар для удаления");
+                return;
+            }
+
+            var result = MessageBox.Show(
+                $"Удалить товар \"{selected.Наименование_товара}\"?",
+                "Подтверждение",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                using var db = new AppDbContext();
+
+                var product = db.Товары.FirstOrDefault(t => t.ТоварID == selected.ТоварID);
+
+                if (product == null)
+                {
+                    MessageBox.Show("Товар не найден");
+                    return;
+                }
+
+                db.Товары.Remove(product);
+                db.SaveChanges();
+
+                LoadProducts();
+            }
+            catch
+            {
+                MessageBox.Show(
+                    "Нельзя удалить товар, который присутствует в заказе.",
+                    "Ошибка удаления",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
-        static bool Match(Product p, string s) => Contains(p.Name, s) || Contains(p.Description, s) || Contains(p.Category, s) || Contains(p.Manufacturer, s) || Contains(p.Supplier, s) || Contains(p.Unit, s);
-        static bool Contains(string? t, string s) => !string.IsNullOrWhiteSpace(t) && t.IndexOf(s, StringComparison.OrdinalIgnoreCase) >= 0;
+        private void Add_card(object sender, RoutedEventArgs e) { new ProductWindow().ShowDialog(); LoadProducts(); }
 
-        private void Button_Click(object sender, RoutedEventArgs e) { new MainWindow().Show(); Close(); }
-        private void supplierCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => ApplyFilters();
-        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) => ApplyFilters();
-
-        private void Delete_Button(object sender, RoutedEventArgs e)
-        {
-            if (ProductsList.SelectedItem is not Product sel) { MessageBox.Show("Выберите товар."); return; }
-            if (MessageBox.Show($"Удалить {sel.Name}?", "", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
-            try { ProductRepository.DeleteProduct(sel.Id); LoadProducts(); MessageBox.Show("Удалено."); } catch (Exception ex) { MessageBox.Show(ex.Message); }
-        }
-
-        private void Add_card(object sender, RoutedEventArgs e) { new Add().ShowDialog(); LoadProducts(); LoadSuppliers(); }
 
         private void Edit_card(object sender, RoutedEventArgs e)
         {
-            if (ProductsList.SelectedItem is not Product sel) { MessageBox.Show("Выберите товар."); return; }
-            var w = new Edit(); w.SetProduct(sel); w.ShowDialog();
-            LoadProducts(); LoadSuppliers();
+            if (ProductsList.SelectedItem is not Товар selected)
+            { MessageBox.Show("Выберите товар."); return; }
+            new ProductWindow(selected.ТоварID).ShowDialog();
+            LoadProducts();
         }
     }
 }

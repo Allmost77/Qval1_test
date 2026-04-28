@@ -17,46 +17,64 @@
 
   <ItemGroup>
     <None Remove="Icon.JPG" />
-    <None Remove="Images\1.jpg" />
-    <None Remove="Images\10.jpg" />
-    <None Remove="Images\2.jpg" />
-    <None Remove="Images\3.jpg" />
-    <None Remove="Images\4.jpg" />
-    <None Remove="Images\5.jpg" />
-    <None Remove="Images\6.jpg" />
-    <None Remove="Images\7.jpg" />
-    <None Remove="Images\8.jpg" />
-    <None Remove="Images\9.jpg" />
-    <None Remove="Images\Icon.JPG" />
-    <None Remove="Images\picture.png" />
+    <None Remove="Pictures\1.jpg" />
+    <None Remove="Pictures\10.jpg" />
+    <None Remove="Pictures\2.jpg" />
+    <None Remove="Pictures\3.jpg" />
+    <None Remove="Pictures\4.jpg" />
+    <None Remove="Pictures\5.jpg" />
+    <None Remove="Pictures\6.jpg" />
+    <None Remove="Pictures\7.jpg" />
+    <None Remove="Pictures\8.jpg" />
+    <None Remove="Pictures\9.jpg" />
+    <None Remove="Pictures\Icon.JPG" />
+    <None Remove="Pictures\picture.png" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.7" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Icon.JPG" />
-    <Resource Include="Images\1.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\10.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\2.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\3.jpg" />
-    <Resource Include="Images\4.jpg" />
-    <Resource Include="Images\5.jpg" />
-    <Resource Include="Images\6.jpg" />
-    <Resource Include="Images\7.jpg" />
-    <Resource Include="Images\8.jpg" />
-    <Resource Include="Images\9.jpg" />
-    <Resource Include="Images\Icon.JPG" />
-    <Resource Include="Images\picture.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <Content Include="Pictures\1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pictures\10.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pictures\2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pictures\3.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pictures\4.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pictures\5.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pictures\6.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pictures\7.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pictures\8.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pictures\9.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pictures\Icon.JPG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pictures\picture.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

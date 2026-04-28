@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestWPF"
         mc:Ignorable="d"
-        Icon="/Images/Icon.JPG"
+        Icon="/Pictures/Icon.JPG"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Button x:Name="To_guest" Content="Войти в гостевом режиме" HorizontalAlignment="Left" Margin="518,352,0,0" VerticalAlignment="Top" Width="163" Click="To_guest_Click"  />

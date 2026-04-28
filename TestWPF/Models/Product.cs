@@ -1,35 +1,60 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
+using System.Text;
 
 namespace TestWPF.Models
 {
-    public class Product
-    {
-        static readonly string ImgPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Images");
-        static string DefaultImgPackUri => "pack://application:,,,/Images/Icon.JPG";
+ 
+    
+        [Table("Товар")]
+   public class Товар
+        {
+            public int ТоварID { get; set; }
+            public string Артикул { get; set; } = "";
+            public string Наименование_товара { get; set; } = "";
+            public string Описание_товара { get; set; } = "";
+            public decimal Цена { get; set; }
+            public int Кол_во_на_складе { get; set; }
+            public int Действующая_скидка { get; set; }
+            public int? ПоставщикID { get; set; }
+            public int? ПроизводительID { get; set; }
+            public int? КатегорияТовараID { get; set; }
+            public int? ЕдиницаИзмеренияID { get; set; }
+            public string? Фото { get; set; }
 
-        public int Id { get; set; }
-        public string Article { get; set; } = "";
-        public string Name { get; set; } = "";
-        public string Description { get; set; } = "";
-        public string Category { get; set; } = "";
-        public string Manufacturer { get; set; } = "";
-        public string Supplier { get; set; } = "";
-        public string Unit { get; set; } = "";
-        public decimal Price { get; set; }
-        public int Quantity { get; set; }
-        public int Discount { get; set; }
-        public string ImagePath { get; set; } = "";
-
-        public string ImageOfPlaceholder
+        [NotMapped]
+        public string ImagePath
         {
             get
             {
-                return $"pack://application:,,,/Images/{ImagePath}";
+                var filename = string.IsNullOrWhiteSpace(Фото) ? "picture.png" : Фото;
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Pictures", filename);
             }
         }
-        public decimal FinalPrice => Price * (100m - Discount) / 100m;
-        public bool HasDiscount => Discount > 0;
-        public bool OutOfStock => Quantity <= 0;
-        public bool BigDiscount => Discount > 15;
+
+
+        //string.IsNullOrWhiteSpace(Фото)
+        //? "/Images/picture.png"
+        //: $"/Images/{Фото}";
+
+        public Поставщик? Поставщик { get; set; }
+        public Manufacturer? Производитель { get; set; }
+        public Category? КатегорияТовара { get; set; }
+        public Unit? ЕдиницаИзмерения { get; set; }
+
+        [NotMapped]
+        public bool HasDiscount => Действующая_скидка > 0;
+
+        [NotMapped]
+        public decimal FinalPrice => Цена * (100 - Действующая_скидка) / 100;
+
+        [NotMapped]
+        public bool OutOfStock => Кол_во_на_складе == 0;
+
+        [NotMapped]
+        public bool BigDiscount => Действующая_скидка > 15;
     }
+    
 }

@@ -6,14 +6,14 @@
         xmlns:local="clr-namespace:TestWPF"
         mc:Ignorable="d"
         Title="MyProgram" Height="450" Width="800"
-        Icon="/Images/Icon.JPG"
+        Icon="/Pictures/Icon.JPG"
         >
     <Grid>
-        <Label x:Name="UserName" Content="" HorizontalAlignment="Left" Margin="497,10,0,0" VerticalAlignment="Top" Width="293" Height="28"/>
-        <TextBox x:Name="SearchTextBox"
-         Margin="22,58,0,0"
-      
-         TextChanged="SearchTextBox_TextChanged" Height="48" VerticalAlignment="Top" HorizontalAlignment="Left" Width="273"/>
+
+        <TextBox x:Name="SearchBox"
+         Margin="22,63,0,0" HorizontalAlignment="Left" Width="251" Height="39" RenderTransformOrigin="0.497,0.527" VerticalAlignment="Top" TextWrapping="WrapWithOverflow" TextChanged="SearchBox_TextChanged">
+         
+        </TextBox>
 
         <ListView x:Name="ProductsList" ItemsSource="{Binding Products}"
           BorderThickness="0"
@@ -58,8 +58,8 @@
                             BorderThickness="2"
                             Margin="0,0,10,0"
                             Padding="6">
-                                <Image Source="{Binding ImageOfPlaceholder}"
-                                Stretch="UniformToFill"/>
+                                <Image Source="{Binding ImagePath}"
+                                Stretch="Fill"/>
                             </Border>
 
                             <Border Grid.Column="1"
@@ -71,29 +71,29 @@
                                 <StackPanel Grid.Column="1" Margin="0,0,10,0" >
                                     <!-- Заголовок: Категория | Наименование -->
                                     <TextBlock FontSize="16" FontWeight="Bold" Margin="0,0,0,6">
-                                    <Run Text="{Binding Category}"/>
+                                    <Run Text="{Binding КатегорияТовара.Имя}"/>
                                     <Run Text=" | "/>
-                                    <Run Text="{Binding Name}"/>
+                                    <Run Text="{Binding Наименование_товара}"/>
                                     </TextBlock>
 
                                     <TextBlock Margin="0,0,0,2">
                                 <Run Text="Описание товара: "/>
-                                <Run Text="{Binding Description}"/>
+                                <Run Text="{Binding Описание_товара}"/>
                                     </TextBlock>
 
                                     <TextBlock Margin="0,0,0,2">
                                 <Run Text="Производитель: "/>
-                                <Run Text="{Binding Manufacturer}"/>
+                                <Run Text="{Binding Производитель.Имя}"/>
                                     </TextBlock>
 
                                     <TextBlock Margin="0,0,0,2">
                                 <Run Text="Поставщик: "/>
-                                <Run Text="{Binding Supplier}"/>
+                                <Run Text="{Binding Поставщик.Имя}"/>
                                     </TextBlock>
 
                                     <TextBlock Margin="0,0,0,2">
                                 <Run Text="Цена: "/>
-                                <Run Text="{Binding Price}" Foreground="Red">
+                                <Run Text="{Binding Цена}" Foreground="Red">
                                         <Run.Style>
                                             <Style TargetType="Run">
                                                 <Style.Triggers>
@@ -121,12 +121,12 @@
 
                                     <TextBlock Margin="0,0,0,2">
                                 <Run Text="Единица измерения: "/>
-                                <Run Text="{Binding Unit}"/>
+                                <Run Text="{Binding ЕдиницаИзмерения.Имя}"/>
                                     </TextBlock>
 
                                     <TextBlock Margin="0,0,0,2">
                                 <Run Text="Количество на складе: "/>
-                                <Run Text="{Binding Quantity}"/>
+                                <Run Text="{Binding Кол_во_на_складе}"/>
                                     </TextBlock>
                                 </StackPanel>
                             </Border>
@@ -138,7 +138,7 @@
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <TextBlock Text="Действующая" HorizontalAlignment="Center"/>
                                     <TextBlock Text="скидка" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                                    <TextBlock Text="{Binding Discount, StringFormat={}{0}%}"
+                                    <TextBlock Text="{Binding Действующая_скидка, StringFormat={}{0}%}"
                                        FontSize="22"
                                        FontWeight="Bold"
                                        HorizontalAlignment="Center"/>
@@ -149,11 +149,11 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Button Content="Назад" HorizontalAlignment="Left" Margin="22,23,0,0" VerticalAlignment="Top" Click="Button_Click"/>
-        <ComboBox x:Name="supplierCombo" HorizontalAlignment="Left" Margin="22,106,0,0" VerticalAlignment="Top" Width="251" SelectionChanged="supplierCombo_SelectionChanged"/>
-        <Button Content="Удалить товар" Click="Delete_Button" HorizontalAlignment="Left" Margin="462,72,0,0" VerticalAlignment="Top"/>
-        <Button Content="Добавить товар" HorizontalAlignment="Left" Margin="341,72,0,0" VerticalAlignment="Top" Width="94" Click="Add_card"/>
-        <Button Content="Изменить" Click="Edit_card" HorizontalAlignment="Left" Margin="580,72,0,0" VerticalAlignment="Top" Width="93"/>
+        <Button Content="Назад" HorizontalAlignment="Left" Margin="22,23,0,0" VerticalAlignment="Top" Click="GoBackButton_Click"/>
+        <ComboBox x:Name="supplierCombo" HorizontalAlignment="Left" Margin="22,106,0,0" VerticalAlignment="Top" Width="251" SelectionChanged="SupplierBox_SelectionChanged" />
+        <Button Content="Удалить товар" Click="DeleteButton_Click" HorizontalAlignment="Left" Margin="462,72,0,0" VerticalAlignment="Top"/>
+        <Button Content="Добавить товар" Click="Add_card" HorizontalAlignment="Left" Margin="341,72,0,0" VerticalAlignment="Top" Width="94" />
+        <Button Content="Изменить" Click="Edit_card"  HorizontalAlignment="Left" Margin="580,72,0,0" VerticalAlignment="Top" Width="93"/>
 
 
 

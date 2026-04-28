@@ -1,0 +1,55 @@
+﻿<Window x:Class="TestWPF.ProductWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestWPF"
+        mc:Ignorable="d"
+        Icon="/Pictures/Icon.JPG"
+        Title="AddWindow" Height="450" Width="800" ResizeMode="NoResize">
+    <Grid>
+        <TextBox Text="{Binding Артикул, UpdateSourceTrigger=PropertyChanged}" Margin="70,68,0,0" Height="29" VerticalAlignment="Top" HorizontalAlignment="Left" Width="177" />
+        <TextBox Text="{Binding Наименование_товара, UpdateSourceTrigger=PropertyChanged}" Margin="70,122,0,0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="177" />
+        <TextBox Text="{Binding Описание_товара, UpdateSourceTrigger=PropertyChanged}" Margin="70,173,553,0" Height="32" VerticalAlignment="Top" />
+        <TextBox Text="{Binding Цена, UpdateSourceTrigger=PropertyChanged}" Margin="70,236,553,0" Height="33" VerticalAlignment="Top" />
+        <TextBox Text="{Binding Кол_во_на_складе, UpdateSourceTrigger=PropertyChanged}" Margin="70,290,553,0" Height="27" VerticalAlignment="Top" />
+        <TextBox Text="{Binding Действующая_скидка, UpdateSourceTrigger=PropertyChanged}" Margin="70,339,553,0" Height="30" VerticalAlignment="Top" />
+
+        <ComboBox x:Name="SupplierBox"
+          SelectedValue="{Binding ПоставщикID}"
+          DisplayMemberPath="Имя"
+          SelectedValuePath="ID" Margin="338,68,286,0" Height="31" VerticalAlignment="Top" />
+
+        <ComboBox x:Name="ManufacturerBox"
+          SelectedValue="{Binding ПроизводительID}"
+          DisplayMemberPath="Имя"
+          SelectedValuePath="ID" Margin="338,128,286,0" RenderTransformOrigin="0.5,0.5" Height="25" VerticalAlignment="Top" >
+        </ComboBox>
+
+        <ComboBox x:Name="CategoryBox"
+          SelectedValue="{Binding КатегорияТовараID}"
+          DisplayMemberPath="Имя"
+          SelectedValuePath="ID" Margin="338,260,0,0" Height="36" VerticalAlignment="Top" HorizontalAlignment="Left" Width="176" />
+
+        <ComboBox x:Name="UnitBox"
+          SelectedValue="{Binding ЕдиницаИзмеренияID}"
+          DisplayMemberPath="Имя"
+          SelectedValuePath="ID" Margin="338,195,286,0" Height="35" VerticalAlignment="Top" />
+
+        <Button Content="Сохранить" Click="SaveButton_Click" Margin="644,315,0,0" Height="62" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100"/>
+        <Label Content="Артикул" HorizontalAlignment="Left" Margin="70,37,0,0" VerticalAlignment="Top"/>
+        <Label Content="Имя" HorizontalAlignment="Left" Margin="70,97,0,0" VerticalAlignment="Top"/>
+
+        <Label Content="Описание" HorizontalAlignment="Left" Margin="70,148,0,0" VerticalAlignment="Top"/>
+        <Label Content="Цена" HorizontalAlignment="Left" Margin="70,211,0,0" VerticalAlignment="Top"/>
+        <Label Content="Кол-во на складе" HorizontalAlignment="Left" Margin="70,265,0,0" VerticalAlignment="Top"/>
+        <Label Content="Действующая скидка" HorizontalAlignment="Left" Margin="70,315,0,0" VerticalAlignment="Top"/>
+        <Label Content="Поставщик" HorizontalAlignment="Left" Margin="338,37,0,0" VerticalAlignment="Top"/>
+        <Label Content="Производитель" HorizontalAlignment="Left" Margin="338,102,0,0" VerticalAlignment="Top"/>
+        <Label Content="Категория товара" HorizontalAlignment="Left" Margin="338,155,0,0" VerticalAlignment="Top"/>
+        <Label Content="Единица измерения" HorizontalAlignment="Center" Margin="0,230,0,0" VerticalAlignment="Top"/>
+        <Button Click="SelectImage_Click" Content="Загрузить Фото" HorizontalAlignment="Left" Margin="652,265,0,0" VerticalAlignment="Top" Height="26" Width="92"/>
+        <Image Source="{Binding ImagePath}" HorizontalAlignment="Left" Height="100" Margin="619,84,0,0" VerticalAlignment="Top" Width="100"/>
+
+    </Grid>
+</Window>
