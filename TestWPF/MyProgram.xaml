@@ -12,7 +12,7 @@
 
         <TextBox x:Name="SearchBox"
          Margin="22,63,0,0" HorizontalAlignment="Left" Width="251" Height="39" RenderTransformOrigin="0.497,0.527" VerticalAlignment="Top" TextWrapping="WrapWithOverflow" TextChanged="SearchBox_TextChanged">
-         
+
         </TextBox>
 
         <ListView x:Name="ProductsList" ItemsSource="{Binding Products}"
@@ -154,6 +154,7 @@
         <Button Content="Удалить товар" Click="DeleteButton_Click" HorizontalAlignment="Left" Margin="462,72,0,0" VerticalAlignment="Top"/>
         <Button Content="Добавить товар" Click="Add_card" HorizontalAlignment="Left" Margin="341,72,0,0" VerticalAlignment="Top" Width="94" />
         <Button Content="Изменить" Click="Edit_card"  HorizontalAlignment="Left" Margin="580,72,0,0" VerticalAlignment="Top" Width="93"/>
+        <Label x:Name="UserName" Content="" HorizontalAlignment="Left" Margin="580,10,0,0" VerticalAlignment="Top" Width="182"/>
 
 
 

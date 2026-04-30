@@ -1,34 +1,54 @@
+using System.Linq;
 using System.Windows;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using TestWPF.Data;
 
 namespace TestWPF
 {
     public partial class MainWindow : Window
     {
-        const string Conn = "Data Source=localhost\\SQLEXPRESS;Database=Qval1_1;Integrated Security=True;Pooling=False;Encrypt=True;TrustServerCertificate=True;Command Timeout=0";
-
         public MainWindow()
         {
             InitializeComponent();
-            try { using var c = new SqlConnection(Conn); c.Open(); } catch (SqlException ex) { MessageBox.Show(ex.Message); }
-
         }
 
-        private void To_guest_Click(object sender, RoutedEventArgs e) { Open("", "", "", ""); }
+        private void To_guest_Click(object sender, RoutedEventArgs e)
+        {
+            Open("Гость", "Гостевой режим", "", "");
+        }
+
         private void Auth_Click(object sender, RoutedEventArgs e)
         {
             var login = LoginTextBox.Text.Trim();
             var pass = PasswordTextBox.Text.Trim();
-            using var conn = new SqlConnection(Conn);
-            using var cmd = new SqlCommand("SELECT Роль_Сотрудника, Имя, Фамилия, Отчество FROM dbo.user_import WHERE Логин=@l AND Пароль=@p", conn);
-            cmd.Parameters.AddWithValue("@l", login);
-            cmd.Parameters.AddWithValue("@p", pass);
-            conn.Open();
-            using var r = cmd.ExecuteReader();
-            if (!r.Read()) { MessageBox.Show("Неверный логин или пароль"); return; }
-            Open(r["Роль_Сотрудника"].ToString() ?? "", r["Имя"].ToString() ?? "", r["Фамилия"].ToString() ?? "", r["Отчество"].ToString() ?? "");
+
+            using var db = new AppDbContext();
+
+            var user = db.Пользователи
+                .Include(u => u.Роль)
+                .FirstOrDefault(u => u.Логин == login && u.Пароль == pass);
+
+            if (user == null)
+            {
+                MessageBox.Show(
+                    "Неверный логин или пароль",
+                    "Ошибка авторизации",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
+            Open(
+                user.Роль?.Имя ?? "",
+                user.Имя,
+                user.Фамилия,
+                user.Отчество);
         }
 
-        void Open(string role, string name, string surname, string patronymic) { new MyProgram(role, name, surname, patronymic).Show(); Close(); }
+        private void Open(string role, string name, string surname, string patronymic)
+        {
+            new MyProgram(role, name, surname, patronymic).Show();
+            Close();
+        }
     }
 }

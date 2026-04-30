@@ -33,12 +33,7 @@ namespace TestWPF.Models
                 return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Pictures", filename);
             }
         }
-
-
-        //string.IsNullOrWhiteSpace(Фото)
-        //? "/Images/picture.png"
-        //: $"/Images/{Фото}";
-
+ 
         public Поставщик? Поставщик { get; set; }
         public Manufacturer? Производитель { get; set; }
         public Category? КатегорияТовара { get; set; }

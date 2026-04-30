@@ -17,7 +17,8 @@ namespace TestWPF.Models
         public string Отчество { get; set; } = "";
         public string Логин { get; set; } = "";
         public string Пароль { get; set; } = "";
-       
 
+        [ForeignKey(nameof(РольID))]
+        public Role? Роль { get; set; }
     }
 }

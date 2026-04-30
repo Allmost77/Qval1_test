@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using TestWPF.Data;
@@ -11,31 +10,20 @@ namespace TestWPF
 {
     public partial class MyProgram : Window
     {
-        public ObservableCollection<Товар> Products { get; } = new();
+
         private List<Товар> _all = new();
 
         public MyProgram(string role, string name, string surname, string patronymic)
         {
             InitializeComponent();
-            //UserName.Content = $"{surname} {name} {patronymic}";
+            UserName.Content = $"{surname} {name} {patronymic}";
             DataContext = this;
             LoadSuppliers();
             LoadProducts();
-            using var db = new AppDbContext();
-
-            var products = db.Товары.ToList();
-
-            MessageBox.Show($"Товаров: {products.Count}");
+            
         }
 
-        //void LoadSuppliers()
-        //{
-        //    supplierCombo.Items.Clear();
-        //    supplierCombo.Items.Add("Все");
-        //    var seen = new HashSet<string>();
-        //    foreach (var p in ProductRepository.GetProducts()) { var s = p.Supplier?.Trim() ?? ""; if (seen.Add(s)) supplierCombo.Items.Add(s); }
-        //    supplierCombo.SelectedIndex = 0;
-        //}
+      
 
         void LoadProducts()
         {
